@@ -3,6 +3,9 @@ on: [workflow_dispatch, push]
 jobs:
   mac:
     runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: ResonatorAU
     steps:
       - uses: actions/checkout@v4
       - name: Configure
@@ -20,4 +23,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: Resonator-mac
-          path: Resonator-mac.zip
+          path: ResonatorAU/Resonator-mac.zip
