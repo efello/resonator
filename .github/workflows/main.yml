@@ -1,0 +1,23 @@
+name: Build Resonator (macOS AU + VST3)
+on: [workflow_dispatch, push]
+jobs:
+  mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build --config Release --target Resonator_AU Resonator_VST3 -j 4
+      - name: Package
+        run: |
+          mkdir out
+          cp -R build/Resonator_artefacts/Release/AU/Resonator.component out/
+          cp -R build/Resonator_artefacts/Release/VST3/Resonator.vst3 out/
+          codesign --force --deep -s - out/Resonator.component
+          codesign --force --deep -s - out/Resonator.vst3
+          ditto -c -k --keepParent out Resonator-mac.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Resonator-mac
+          path: Resonator-mac.zip
